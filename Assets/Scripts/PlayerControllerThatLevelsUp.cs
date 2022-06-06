@@ -16,10 +16,12 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
     //The base move and turn speed
     public float moveSpeed = 1f;
     public float turnSpeed = 45f;
+    public float jumpHeight = 2f;
 
     //The move and turn speed with the buffs you have from leveling up.   
     public float currentMoveSpeed;
     public float currentTurnSpeed;
+    public float currentJumpHeight;
 
     public int currentLockPickSkill;
 
@@ -28,15 +30,20 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
     public float xpForNextLevel = 10;   //Xp needed to level up, the higher the level, the harder it gets. 
     public int level = 0;   // Level of the player
 
+    [SerializeField] private Vector3 spawn;
 
-
-
+    private AnimationManager animManager;
 
     private void Start()
-    {
+    {        
+        spawn = transform.position;
+        
         SetXpForNextLevel();
         SetCurrentMoveSpeed();
         SetCurrentTurnSpeed();
+        SetCurrentJumpHeight();
+
+        animManager = GetComponent<AnimationManager>();
     }
 
 
@@ -61,6 +68,13 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
         Debug.Log("currentMoveSpeed = " + currentMoveSpeed);
     }
 
+    //For each level, the player will gain an additional 10% jump height. Very cool!
+    void SetCurrentJumpHeight()
+    {
+        currentJumpHeight = this.jumpHeight + (this.jumpHeight * 0.1f * level);
+        Debug.Log("currentJumpHeigh = " + currentJumpHeight);
+    }
+
     // For each level, the player adds 10% to the turn speed 
     void SetCurrentTurnSpeed()
     {
@@ -77,7 +91,7 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
         SetXpForNextLevel();
         SetCurrentMoveSpeed();
         SetCurrentTurnSpeed();
-
+        SetCurrentJumpHeight();
     }
 
 
@@ -103,21 +117,49 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
             LevelUp();
         }
 
-
-
-
+        // Check spacebar to trigger jumping. Checks if vertical velocity (eg velocity.y) is near to zero.
+        if (Input.GetKey(KeyCode.Space) == true && Mathf.Abs(this.GetComponent<Rigidbody>().velocity.y) < 0.01f)
+        {
+            this.GetComponent<Rigidbody>().velocity += Vector3.up * this.jumpHeight;
+            animManager.JumpAnim();
+        }
 
         // Rotation and movement speed is modifed by the level (currentMoveSpeed) of the player and by the time between update frames (Time.deltaTime). 
 
         // Move player via up/down arrow keys
-        if (Input.GetKey(KeyCode.UpArrow) == true) { this.transform.position += this.transform.forward * currentMoveSpeed * Time.deltaTime; }
-        if (Input.GetKey(KeyCode.DownArrow) == true) { this.transform.position -= this.transform.forward * currentMoveSpeed * Time.deltaTime; }
+        
+            if (Input.GetKey(KeyCode.UpArrow) == true)
+            {
+                this.transform.position += this.transform.forward * currentMoveSpeed * Time.deltaTime;
+                if (animManager.fall == false)
+                {
+                    animManager.ToggleRun(true);
+                }
+            }
+            else if (Input.GetKey(KeyCode.DownArrow) == true)
+            {
+                this.transform.position -= this.transform.forward * currentMoveSpeed * Time.deltaTime;
+                if (animManager.fall == false)
+                {
+                    animManager.ToggleRun(true);
+                }
+            }
+            else
+            {
+                animManager.ToggleRun(false);
+            }
+        
 
         // Rotate player via left/right arrow keys
         // Identify this position, set the vertical axis as the axis to rotate around the set the rotation speed.
         if (Input.GetKey(KeyCode.RightArrow) == true) { this.transform.RotateAround(this.transform.position, Vector3.up, currentTurnSpeed * Time.deltaTime); }
         if (Input.GetKey(KeyCode.LeftArrow) == true) { this.transform.RotateAround(this.transform.position, Vector3.up, -currentTurnSpeed * Time.deltaTime); }
 
+    }
+
+    public void Respawn()
+    {
+        this.transform.position = spawn;
     }
 }
 
