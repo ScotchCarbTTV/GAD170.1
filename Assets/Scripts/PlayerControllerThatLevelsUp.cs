@@ -120,7 +120,7 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
         // Check spacebar to trigger jumping. Checks if vertical velocity (eg velocity.y) is near to zero.
         if (Input.GetKey(KeyCode.Space) == true && Mathf.Abs(this.GetComponent<Rigidbody>().velocity.y) < 0.01f)
         {
-            this.GetComponent<Rigidbody>().velocity += Vector3.up * this.jumpHeight;
+            this.GetComponent<Rigidbody>().velocity += Vector3.up * this.currentJumpHeight;
             animManager.JumpAnim();
         }
 
