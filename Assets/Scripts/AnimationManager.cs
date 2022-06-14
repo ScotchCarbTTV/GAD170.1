@@ -18,16 +18,21 @@ public class AnimationManager : MonoBehaviour
     {
         if (other.gameObject.tag == "Ground")
         {            
+            StopJump();                       
+        }
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.gameObject.tag == "Ground" && fall == true)
+        {
             StopJump();
-            animator.SetTrigger("hitGround");
-            
         }
     }
 
     public void JumpAnim()
     {
-        animator.SetTrigger("jump");
-        animator.SetTrigger("hitGround");
+        animator.SetTrigger("jump");        
         ToggleFall(true);
     }
 

@@ -12,17 +12,24 @@ using UnityEngine;
 
 public class PlayerControllerThatLevelsUp : MonoBehaviour
 {
+    //variable for adjusting the rate at which the character falls
+    public float gravityModifier = 2.5f;
+    public float lowJumpMultipier = 2f;
 
     //The base move and turn speed
     public float moveSpeed = 1f;
     public float turnSpeed = 45f;
     public float jumpHeight = 2f;
 
+    //The base lock picking skill which will determine how likely the player is to open a chest
+    public int lockPickSkill;
+
     //The move and turn speed with the buffs you have from leveling up.   
     public float currentMoveSpeed;
     public float currentTurnSpeed;
     public float currentJumpHeight;
 
+    //the lockpicking skill with the buff from levelling up
     public int currentLockPickSkill;
 
 
@@ -42,6 +49,7 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
         SetCurrentMoveSpeed();
         SetCurrentTurnSpeed();
         SetCurrentJumpHeight();
+        SetCurrentLockPickSkill();
 
         animManager = GetComponent<AnimationManager>();
     }
@@ -59,8 +67,6 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
         Debug.Log("xpForNextLevel " + xpForNextLevel);
     }
 
-
-
     // For each level, the player adds 10% to the move speed 
     void SetCurrentMoveSpeed()
     {
@@ -72,6 +78,7 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
     void SetCurrentJumpHeight()
     {
         currentJumpHeight = this.jumpHeight + (this.jumpHeight * 0.1f * level);
+        lowJumpMultipier = this.lowJumpMultipier + (this.lowJumpMultipier * 0.1f * level);
         Debug.Log("currentJumpHeigh = " + currentJumpHeight);
     }
 
@@ -82,6 +89,13 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
         Debug.Log("currentTurnSpeed = " + currentTurnSpeed);
     }
 
+    //For each level the player adds their current level to their initial lockPickSkill
+    void SetCurrentLockPickSkill()
+    {
+        float tempLockPickSkill = this.lockPickSkill + (this.lockPickSkill * (level * 0.1f));
+
+        currentLockPickSkill = (int)tempLockPickSkill;
+    }
 
     void LevelUp()
     {
@@ -92,10 +106,9 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
         SetCurrentMoveSpeed();
         SetCurrentTurnSpeed();
         SetCurrentJumpHeight();
+        //call the SetCurrentLockPickSkill method
+        SetCurrentLockPickSkill();
     }
-
-
-
 
     //a function to make the player gain the amount of Xp the you tell it. 
     public void GainXP(int xpToGain)
@@ -104,24 +117,43 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
         Debug.Log("Gained " + xpToGain + " XP, Current Xp = " + xp + ", XP needed to reach next Level = " + xpForNextLevel);
     }
 
-
     void Update()
     {
         //Test the GainXp function by pressing the x button. 
         if (Input.GetKeyDown(KeyCode.X) == true) { GainXP(1); }
 
-
+    //levelling up code
+    #region
         //LevelUp when the appropriate conditions are met.
         if (xp >= xpForNextLevel)
         {
             LevelUp();
         }
+    #endregion
 
+
+        //movement: jumping, running, turning and falling code.
+        #region
         // Check spacebar to trigger jumping. Checks if vertical velocity (eg velocity.y) is near to zero.
-        if (Input.GetKey(KeyCode.Space) == true && Mathf.Abs(this.GetComponent<Rigidbody>().velocity.y) < 0.01f)
+        if (Input.GetKeyDown(KeyCode.Space) == true && Mathf.Abs(this.GetComponent<Rigidbody>().velocity.y) < 0.01f && !animManager.fall)
         {
             this.GetComponent<Rigidbody>().velocity += Vector3.up * this.currentJumpHeight;
             animManager.JumpAnim();
+        }
+        //checks to see if the player is falling without having hit jump and triggers the falling animation 
+        else if (Mathf.Abs(this.GetComponent<Rigidbody>().velocity.y) > 0.01f && animManager.fall == false)
+        {
+            animManager.JumpAnim();
+        }
+        //checks if the player is current descending and increases their fall rate by the gravityModifier
+        if(this.GetComponent<Rigidbody>().velocity.y < 0 && animManager.fall == true)
+        {
+            this.GetComponent<Rigidbody>().velocity += Vector3.up * Physics.gravity.y * (gravityModifier - 1) * Time.deltaTime;
+        }
+        //checks if tthe player is still holding down spacebar; if not, the effect of gravity is increased so they perform a smaller 'hop'
+        else if(Mathf.Abs(this.GetComponent<Rigidbody>().velocity.y) > 0.01f && !Input.GetKey(KeyCode.Space))
+        {
+            this.GetComponent<Rigidbody>().velocity += Vector3.up * Physics.gravity.y * (lowJumpMultipier - 1) * Time.deltaTime;
         }
 
         // Rotation and movement speed is modifed by the level (currentMoveSpeed) of the player and by the time between update frames (Time.deltaTime). 
@@ -148,13 +180,15 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
             {
                 animManager.ToggleRun(false);
             }
-        
+
+       
+
 
         // Rotate player via left/right arrow keys
         // Identify this position, set the vertical axis as the axis to rotate around the set the rotation speed.
         if (Input.GetKey(KeyCode.RightArrow) == true) { this.transform.RotateAround(this.transform.position, Vector3.up, currentTurnSpeed * Time.deltaTime); }
         if (Input.GetKey(KeyCode.LeftArrow) == true) { this.transform.RotateAround(this.transform.position, Vector3.up, -currentTurnSpeed * Time.deltaTime); }
-
+        #endregion
     }
 
     public void Respawn()
