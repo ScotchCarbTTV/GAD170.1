@@ -20,7 +20,7 @@ public class Coin : MonoBehaviour
 
     void Update()
     {
-        this.transform.Rotate(0f, 0f, Time.deltaTime * this.spinSpeed);
+        this.transform.Rotate(0f, Time.deltaTime * this.spinSpeed, 0f );
     }
 
     private void OnTriggerEnter(Collider other)

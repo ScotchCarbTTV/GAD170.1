@@ -78,7 +78,7 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
     void SetCurrentJumpHeight()
     {
         currentJumpHeight = this.jumpHeight + (this.jumpHeight * 0.1f * level);
-        lowJumpMultipier = this.lowJumpMultipier + (this.lowJumpMultipier * 0.1f * level);
+        lowJumpMultipier = currentJumpHeight / 2;
         Debug.Log("currentJumpHeigh = " + currentJumpHeight);
     }
 
@@ -92,9 +92,7 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
     //For each level the player adds their current level to their initial lockPickSkill
     void SetCurrentLockPickSkill()
     {
-        float tempLockPickSkill = this.lockPickSkill + (this.lockPickSkill * (level * 0.1f));
-
-        currentLockPickSkill = (int)tempLockPickSkill;
+        currentLockPickSkill = lockPickSkill + level;
     }
 
     void LevelUp()
@@ -120,7 +118,7 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
     void Update()
     {
         //Test the GainXp function by pressing the x button. 
-        if (Input.GetKeyDown(KeyCode.X) == true) { GainXP(1); }
+        if (Input.GetKeyDown(KeyCode.X) == true) { GainXP((int)xpForNextLevel); }
 
     //levelling up code
     #region
