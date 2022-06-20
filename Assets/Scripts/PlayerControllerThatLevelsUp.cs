@@ -118,7 +118,7 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
     void Update()
     {
         //Test the GainXp function by pressing the x button. 
-        if (Input.GetKeyDown(KeyCode.X) == true) { GainXP((int)xpForNextLevel); }
+        if (Input.GetKeyDown(KeyCode.X) == true) { GainXP(10); }
 
     //levelling up code
     #region
@@ -188,6 +188,12 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
         if (Input.GetKey(KeyCode.LeftArrow) == true) { this.transform.RotateAround(this.transform.position, Vector3.up, -currentTurnSpeed * Time.deltaTime); }
         #endregion
     }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        Debug.Log(collision.gameObject.name);
+    }
+
 
     public void Respawn()
     {
