@@ -133,23 +133,28 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
         //movement: jumping, running, turning and falling code.
         #region
         // Check spacebar to trigger jumping. Checks if vertical velocity (eg velocity.y) is near to zero.
-        if (Input.GetKeyDown(KeyCode.Space) == true && Mathf.Abs(this.GetComponent<Rigidbody>().velocity.y) < 0.01f && !animManager.fall)
+        //if (Input.GetButtonDown("Jump") == true && Mathf.Abs(this.GetComponent<Rigidbody>().velocity.y) < 0.01f && !animManager.fall)
+        //replacing the above line of code with the below one since checking the vertical velocity stops you from being able to junmp while running down a ramp. Checking the animation manager state should cover it.
+        if (Input.GetButtonDown("Jump") == true && !animManager.fall)
         {
             this.GetComponent<Rigidbody>().velocity += Vector3.up * this.currentJumpHeight;
             animManager.JumpAnim();
         }
         //checks to see if the player is falling without having hit jump and triggers the falling animation 
+        //needs to be tweaked; if moving down a sloped surface the player will go into the falling animation
+        //possibly replace with an 'OnTriggerExit' on AnimationManager to check if the player's trigger is no longer touching the ground.        
+        /*
         else if (Mathf.Abs(this.GetComponent<Rigidbody>().velocity.y) > 0.01f && animManager.fall == false)
         {
             animManager.JumpAnim();
-        }
+        }*/
         //checks if the player is current descending and increases their fall rate by the gravityModifier
         if(this.GetComponent<Rigidbody>().velocity.y < 0 && animManager.fall == true)
         {
             this.GetComponent<Rigidbody>().velocity += Vector3.up * Physics.gravity.y * (gravityModifier - 1) * Time.deltaTime;
         }
         //checks if tthe player is still holding down spacebar; if not, the effect of gravity is increased so they perform a smaller 'hop'
-        else if(Mathf.Abs(this.GetComponent<Rigidbody>().velocity.y) > 0.01f && !Input.GetKey(KeyCode.Space))
+        else if(Mathf.Abs(this.GetComponent<Rigidbody>().velocity.y) > 0.01f && !Input.GetButton("Jump"))
         {
             this.GetComponent<Rigidbody>().velocity += Vector3.up * Physics.gravity.y * (lowJumpMultipier - 1) * Time.deltaTime;
         }

@@ -30,6 +30,14 @@ public class AnimationManager : MonoBehaviour
         }
     }
 
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.tag == "Ground" && fall == false)
+        {
+            JumpAnim();
+        }
+    }
+
     public void JumpAnim()
     {
         animator.SetTrigger("jump");        
