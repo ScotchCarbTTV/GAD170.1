@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Cinemachine;
 
 /*
  
@@ -12,6 +13,9 @@ using UnityEngine;
 
 public class PlayerControllerThatLevelsUp : MonoBehaviour
 {
+    [SerializeField] private Transform cam;
+    [SerializeField] CinemachineFreeLook cinemachine;
+
     //variable for adjusting the rate at which the character falls
     public float gravityModifier = 2.5f;
     public float lowJumpMultipier = 2f;
@@ -20,6 +24,9 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
     public float moveSpeed = 1f;
     public float turnSpeed = 45f;
     public float jumpHeight = 2f;
+
+    public float turnSmoothTime = 1f;
+    private float turnSmoothVelocity;
 
     //The base lock picking skill which will determine how likely the player is to open a chest
     public int lockPickSkill;
@@ -40,6 +47,9 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
     [SerializeField] private Vector3 spawn;
 
     private AnimationManager animManager;
+
+    private Vector3 motion;
+    private Vector2 input;
 
     private void Start()
     {
@@ -86,6 +96,7 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
     void SetCurrentTurnSpeed()
     {
         currentTurnSpeed = this.turnSpeed + (this.turnSpeed * (level * 0.1f));
+        cinemachine.m_XAxis.m_MaxSpeed = currentTurnSpeed;
         Debug.Log("currentTurnSpeed = " + currentTurnSpeed);
     }
 
@@ -161,42 +172,102 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
 
         // Rotation and movement speed is modifed by the level (currentMoveSpeed) of the player and by the time between update frames (Time.deltaTime). 
 
-        // Move player via up/down arrow keys
-        
-            if (Input.GetKey(KeyCode.UpArrow) == true)
+
+        // Move player via up/down arrow keys               
+
+        input.x = Input.GetAxis("Vertical");
+        input.y = Input.GetAxis("Horizontal");
+        motion = new Vector3(input.y, 0, input.x).normalized;
+
+        if (motion.magnitude >= 0.1)
+        {
+            float targetAngle = Mathf.Atan2(motion.x, motion.z) * Mathf.Rad2Deg + cam.eulerAngles.y;
+            float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
+            transform.rotation = Quaternion.Euler(0f, angle, 0f);
+            Vector3 moveDir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
+
+            transform.position += new Vector3(moveDir.x, 0, moveDir.z) * currentMoveSpeed * Time.deltaTime;
+            if (animManager.fall == false)
             {
-                this.transform.position += this.transform.forward * currentMoveSpeed * Time.deltaTime;
-                if (animManager.fall == false)
-                {
-                    animManager.ToggleRun(true);
-                }
+                animManager.ToggleRun(true);
             }
-            else if (Input.GetKey(KeyCode.DownArrow) == true)
+                       
+        }
+        /* this part of the script is from having the tank controls active.
+        else if(motion.x < 0)
+        {
+            transform.position += -transform.forward * currentMoveSpeed * Time.deltaTime;
+            if (animManager.fall == false)
             {
-                this.transform.position -= this.transform.forward * currentMoveSpeed * Time.deltaTime;
-                if (animManager.fall == false)
-                {
-                    animManager.ToggleRun(true);
-                }
-            }
-            else
-            {
-                animManager.ToggleRun(false);
+                animManager.ToggleRun(true);
             }
 
-       
+        }*/
+        else
+        {
+            animManager.ToggleRun(false);
+        }
 
+
+        /*
+        if(motion.x > 0)
+        {
+            //cause the player to move forward relative to their own current rotation at the current movement speed
+            transform.position += transform.forward * currentMoveSpeed * Time.deltaTime;
+            Vector3 currentDir = transform.forward;
+            //transform.forward = Vector3.Slerp(currentDir, new Vector3(transform.position.x, transform.position.y, cam.transform.forward.z), currentTurnSpeed * Time.deltaTime);
+            if (animManager.fall == false)
+            {
+                animManager.ToggleRun(true);
+            }
+        }   
+        else if(motion.x < 0)
+        {
+            transform.position += transform.forward * -currentMoveSpeed * Time.deltaTime;
+            Vector3 currentDir = transform.forward;
+            //transform.forward = Vector3.Slerp(currentDir, new Vector3(transform.position.x, transform.position.y, -cam.position.z), currentTurnSpeed * Time.deltaTime);
+            if (animManager.fall == false)
+            {
+                animManager.ToggleRun(true);
+            }
+        }
+        else if(motion.z > 0)
+        {
+            transform.position += transform.forward * currentMoveSpeed * Time.deltaTime;
+            Vector3 currentDir = transform.forward;
+            //transform.forward = Vector3.Slerp(currentDir, cam.transform.right, currentTurnSpeed * Time.deltaTime);
+            if (animManager.fall == false)
+            {
+                animManager.ToggleRun(true);
+            }
+        }
+        else if(motion.z < 0)
+        {
+            transform.position += transform.forward * currentMoveSpeed * Time.deltaTime;
+            Vector3 currentDir = transform.forward;
+            //transform.forward = Vector3.Slerp(currentDir, -cam.transform.right, currentTurnSpeed * Time.deltaTime);
+            if (animManager.fall == false)
+            {
+                animManager.ToggleRun(true);
+            }
+        }
+
+       */
+
+
+
+
+
+
+
+
+        //commented out the code for turning with the arrow keys as tank controls are gross for a platformer
 
         // Rotate player via left/right arrow keys
         // Identify this position, set the vertical axis as the axis to rotate around the set the rotation speed.
-        if (Input.GetKey(KeyCode.RightArrow) == true) { this.transform.RotateAround(this.transform.position, Vector3.up, currentTurnSpeed * Time.deltaTime); }
-        if (Input.GetKey(KeyCode.LeftArrow) == true) { this.transform.RotateAround(this.transform.position, Vector3.up, -currentTurnSpeed * Time.deltaTime); }
+        /*if (Input.GetAxisRaw("Horizontal") > 0) { this.transform.RotateAround(this.transform.position, Vector3.up, currentTurnSpeed * Time.deltaTime); }
+        if (Input.GetAxisRaw("Horizontal") < 0) { this.transform.RotateAround(this.transform.position, Vector3.up, -currentTurnSpeed * Time.deltaTime); }*/
         #endregion
-    }
-
-    private void OnCollisionEnter(Collision collision)
-    {
-        Debug.Log(collision.gameObject.name);
     }
 
     public void SetRespawn()
