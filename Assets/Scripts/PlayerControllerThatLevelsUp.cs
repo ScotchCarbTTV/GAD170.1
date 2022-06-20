@@ -42,8 +42,8 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
     private AnimationManager animManager;
 
     private void Start()
-    {        
-        spawn = transform.position;
+    {
+        SetRespawn();
         
         SetXpForNextLevel();
         SetCurrentMoveSpeed();
@@ -194,6 +194,10 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
         Debug.Log(collision.gameObject.name);
     }
 
+    public void SetRespawn()
+    {
+        spawn = new Vector3(transform.position.x, transform.position.y + 1, transform.position.z);
+    }
 
     public void Respawn()
     {
