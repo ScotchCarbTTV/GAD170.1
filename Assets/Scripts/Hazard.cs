@@ -14,6 +14,7 @@ public class Hazard : MonoBehaviour
     private void Start()
     {
         GameObject.FindGameObjectWithTag("Player").TryGetComponent<PlayerHealth>(out pHealth);
+        GameObject.FindGameObjectWithTag("Player").TryGetComponent<PlayerControllerThatLevelsUp>(out pController);
         invuln = false;
     }
 
@@ -30,7 +31,7 @@ public class Hazard : MonoBehaviour
 
     IEnumerator Invuln()
     {
-        if (pHealth.currentHealth > 0)
+        if (pHealth.currentHealth > 1)
         {
             invuln = true;
             pHealth.LoseHealth();
@@ -40,6 +41,7 @@ public class Hazard : MonoBehaviour
         }
         else
         {
+            pHealth.LoseHealth();
             invuln = true;
             pController.Death(3);
         }

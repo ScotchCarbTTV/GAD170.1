@@ -393,5 +393,17 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
         SceneManager.LoadScene("GameScene");
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        
+        Enemy enemy;
+        //execute the 'death' method on the enemy.
+        if (other.TryGetComponent<Enemy>(out enemy))
+        {
+            enemy.Death();
+            Jump(1, 1);
+        }
+    }
+
 }
 

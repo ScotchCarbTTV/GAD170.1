@@ -23,7 +23,7 @@ public class AnimationManager : MonoBehaviour
         if (other.gameObject.tag == "Ground")
         {            
             StopJump();                       
-        }
+        }        
     }
 
     private void OnTriggerStay(Collider other)
