@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using Cinemachine;
 
 /*
@@ -14,7 +16,17 @@ using Cinemachine;
 public class PlayerControllerThatLevelsUp : MonoBehaviour
 {
     [SerializeField] private Transform cam;
+    [SerializeField] private CinemachineBrain brain;
     [SerializeField] CinemachineFreeLook cinemachine;
+
+    [SerializeField] private SkinnedMeshRenderer body;
+    [SerializeField] private SkinnedMeshRenderer eyes;
+
+    [SerializeField] private GameObject ragDoll;
+
+    [SerializeField] private GameObject deathScreen;
+
+    private Rigidbody rbody;
 
     //variable for adjusting the rate at which the character falls
     public float gravityModifier = 2.5f;
@@ -51,6 +63,13 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
     private Vector3 motion;
     private Vector2 input;
 
+    private void Awake()
+    {
+        body.enabled = true;
+        eyes.enabled = true;
+        deathScreen.SetActive(false);
+    }
+
     private void Start()
     {
         SetRespawn();
@@ -62,9 +81,13 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
         SetCurrentLockPickSkill();
 
         animManager = GetComponent<AnimationManager>();
+        cam.TryGetComponent<CinemachineBrain>(out brain);
+
+        if (!gameObject.TryGetComponent<Rigidbody>(out rbody))
+        {
+            Debug.LogError("You need a Rigidbody component on this game object.");
+        }
     }
-
-
 
     // To level up you need to collect an amount of xp;
     // This starts at 10 xp
@@ -128,6 +151,7 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
 
     void Update()
     {
+        
         //Test the GainXp function by pressing the x button. 
         if (Input.GetKeyDown(KeyCode.X) == true) { GainXP(10); }
 
@@ -148,8 +172,7 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
         //replacing the above line of code with the below one since checking the vertical velocity stops you from being able to junmp while running down a ramp. Checking the animation manager state should cover it.
         if (Input.GetButtonDown("Jump") == true && !animManager.fall)
         {
-            this.GetComponent<Rigidbody>().velocity += Vector3.up * this.currentJumpHeight;
-            animManager.JumpAnim();
+            Jump(1, 1);
         }
         //checks to see if the player is falling without having hit jump and triggers the falling animation 
         //needs to be tweaked; if moving down a sloped surface the player will go into the falling animation
@@ -253,14 +276,6 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
         }
 
        */
-
-
-
-
-
-
-
-
         //commented out the code for turning with the arrow keys as tank controls are gross for a platformer
 
         // Rotate player via left/right arrow keys
@@ -270,14 +285,113 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
         #endregion
     }
 
+    public void Jump(int jumpMod, int jumpType)
+    {        
+        this.GetComponent<Rigidbody>().velocity += Vector3.up * this.currentJumpHeight * jumpMod;
+        if (jumpType == 1)
+        {
+            animManager.JumpAnim();
+        }
+        else if(jumpType == 2)
+        {
+            animManager.Ouchie();
+        }
+    }
+
     public void SetRespawn()
     {
         spawn = new Vector3(transform.position.x, transform.position.y + 1, transform.position.z);
     }
 
-    public void Respawn()
+    public void Death(int deathType)
     {
-        this.transform.position = spawn;
+        //deathType 1 = falling with lives left
+        //deathType 2 = falling no lives left
+        //deathType 3 = died to 
+        
+
+        if (deathType == 1)
+        {
+            StartCoroutine(FallRespawn());
+        }
+        else if(deathType == 2)
+        {
+            StartCoroutine(FallDeath());
+        }
+        else
+        {
+            StartCoroutine(DamageDeath());
+        }
     }
+
+    public void RagDoll()
+    {
+        body.enabled = false;
+        eyes.enabled = false;
+        Instantiate(ragDoll, transform.position, transform.rotation);
+    }
+
+    IEnumerator FallRespawn()    {
+
+
+        //decouple the camera from the player
+        brain.enabled = false;
+
+        //show the 'YOU DIED' ui element
+
+        //wait a few seconds
+        yield return new WaitForSeconds(3);
+
+        //clear 'YOU DIED' ui element
+        
+            //move the player 
+        rbody.velocity = Vector3.zero; //prevents the player clipping through the ground when they respawn
+        this.transform.position = spawn;
+        
+
+        //recouple the camera to the player
+        brain.enabled = true;
+    }
+
+    IEnumerator FallDeath()
+    {
+        brain.enabled = false;
+
+        //show the 'YOU DIED' ui element
+        deathScreen.SetActive(true);
+
+        //wait a few seconds
+        yield return new WaitForSeconds(3);
+
+        //clear 'YOU DIED' ui element
+
+        //recouple the camera to the player
+        brain.enabled = true;
+
+        SceneManager.LoadScene("GameScene");
+    }
+
+    IEnumerator DamageDeath()
+    {
+        brain.enabled = false;
+
+        //spawn the ragdoll
+        Jump(5, 2);
+        RagDoll();
+
+        //show the 'YOU DIED' ui element
+        deathScreen.SetActive(true);
+
+        //wait a few seconds
+        yield return new WaitForSeconds(3);
+
+        //clear 'YOU DIED' ui element
+
+        //recouple the camera to the player
+        brain.enabled = true;
+
+        SceneManager.LoadScene("GameScene");
+    }
+
 }
 

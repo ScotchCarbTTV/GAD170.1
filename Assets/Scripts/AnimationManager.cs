@@ -7,9 +7,13 @@ public class AnimationManager : MonoBehaviour
     private Animator animator;
     public bool fall { get; private set; }
 
+    private void Awake()
+    {
+        TryGetComponent<Animator>(out animator);        
+    }
     void Start()
     {
-        TryGetComponent<Animator>(out animator);
+        animator.SetBool("dead", false);
         ToggleFall(false);
     }
 
@@ -39,9 +43,27 @@ public class AnimationManager : MonoBehaviour
     }
 
     public void JumpAnim()
-    {
-        animator.SetTrigger("jump");        
+    {            
         ToggleFall(true);
+    }
+
+    //player flinching when getting hit
+    public void Ouchie()
+    {
+        //set the animator state to 'flinching'
+        animator.SetBool("flinching", true);        
+
+        //toggle falling to true
+        if (!fall)
+        {
+            ToggleFall(true);
+        }
+    }
+
+    public void StopOuchie()
+    {
+        //set the animator state to 'not flinching'
+        animator.SetBool("flinching", false);
     }
 
     public void StopJump()
@@ -74,6 +96,11 @@ public class AnimationManager : MonoBehaviour
             animator.SetBool("isFalling", false);
             fall = false;
         }
+    }
+
+    public void Death()
+    {
+        animator.SetBool("dead", true);
     }
 
 }
