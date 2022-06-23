@@ -8,6 +8,8 @@ TagManager:
   - Fog
   - Checkpoint
   - XPUIManager
+  - FreeLook
+  - FreelookFocal
   layers:
   - Default
   - TransparentFX
