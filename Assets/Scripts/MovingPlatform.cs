@@ -14,23 +14,33 @@ using UnityEngine;
 
 public class MovingPlatform : MonoBehaviour
 {
+    //variables containing the two points to move between
+    [SerializeField] private GameObject pointA;
+    [SerializeField] private GameObject pointB;
+
+    //variable for the current target point
+    private GameObject targetPoint;
+
     private Animator animator;
 
-    public enum Axis { X_AXIS, Y_AXIS, Z_AXIS }
+    private Vector3 direction = new Vector3();
+    
+    //public enum Axis { X_AXIS, Y_AXIS, Z_AXIS }
 
-    public Axis axis;
-    public float moveDistance;
+    //public Axis axis;
+    //public float moveDistance;
+
     public float moveSpeed;
 
     private void Start()
     {
-        //GameObject player;
-        //player = GameObject.FindGameObjectWithTag("Player");
-        //player.TryGetComponent<Animator>(out animator);
+        targetPoint = pointA;
     }
 
     void Update()
     {
+        #region
+        /*
         Vector3 moveDirection = Vector3.zero;
         switch (this.axis)
         {
@@ -48,16 +58,40 @@ public class MovingPlatform : MonoBehaviour
         }
 
         this.transform.position += moveDirection * Time.deltaTime * this.moveDistance * Mathf.Sin(Time.time * this.moveSpeed);
+        */
+        #endregion
+
+        //check if the platform is within the stopping distance of the target position
+        if(Vector3.Distance(transform.position, targetPoint.transform.position) < 0.5f)
+        {
+            //change the target position to the currently non-active target position
+            if(targetPoint == pointA)
+            {
+                targetPoint = pointB;
+            }
+            else
+            {
+                targetPoint = pointA;
+            }
+        }
+
+        //calculate direction to the targetPoint and normalize it
+        direction = (targetPoint.transform.position - transform.position).normalized;
+
+        //move the platform in the desired direction modified by the movespeed
+        transform.position += direction * moveSpeed * Time.deltaTime;
     }
 
     private void OnTriggerEnter(Collider other)
     {
+        //set the parent of the player to this object
         other.transform.parent = this.transform;
-        //animator.SetTrigger("hitGround");
+        
     }
 
     private void OnTriggerExit(Collider other)
     {
+        //remove this object as the player object's parent
         other.transform.parent = null;
     }
 }

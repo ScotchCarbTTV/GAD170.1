@@ -99,6 +99,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spinSpeed: 100
   xpValue: 15
+  xpGainUI: {fileID: 0}
+  coinType: 1
 --- !u!135 &1198328382641466922
 SphereCollider:
   m_ObjectHideFlags: 0

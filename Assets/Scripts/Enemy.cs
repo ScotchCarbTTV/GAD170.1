@@ -36,10 +36,13 @@ public class Enemy : MonoBehaviour
 
     private void Start()
     {
+        //assign the player variable to an object tagged as Player
         player = GameObject.FindGameObjectWithTag("Player");
 
         //set the initial state of the StateMachine
         StateMachine.SetState(new EnemyPatrol(this));
+
+        //set up the patrolArea vector based on the position of the patrol node
         if(patrolNode != null) 
         { 
             patrolArea = new Vector2(patrolNode.transform.position.x, patrolNode.transform.position.z);
@@ -50,12 +53,14 @@ public class Enemy : MonoBehaviour
     {
         //move towards current target
         agent.SetDestination(target.position);
+        //call the OnUpdate method of the state machine
         StateMachine.OnUpdate();
     }
 
     //abstract class for defining the enemy states which inherits from the state machine
     public abstract class EnemyState : IState
     {
+        //instance variable to all the different states to call methods and variables from the base class
         protected Enemy instance;
 
         //constructor for the enemy states

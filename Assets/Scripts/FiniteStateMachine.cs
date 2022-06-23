@@ -1,5 +1,10 @@
 namespace FiniteStateMachine
 {
+    /*
+     FiniteStateMachine script used with permission from Immergo Media on YouTube
+     via https://www.youtube.com/watch?v=il1_1KskiDk 
+     */
+
     public interface IState
     {
         void OnEnter();

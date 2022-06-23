@@ -13,37 +13,53 @@ using Cinemachine;
         Left/right arrow keys to rotate left and right.
 */
 
+/*
+   Modified by Ian Bell 23/6/22
+ */
+
 public class PlayerControllerThatLevelsUp : MonoBehaviour
 {
+    //references to the camera, cinemachine brain and cinemachine freelook component
     [SerializeField] private Transform cam;
     [SerializeField] private CinemachineBrain brain;
     [SerializeField] CinemachineFreeLook cinemachine;
 
+    //variable referencing the StatManagerUI script to update the UI
+    [SerializeField] StatManagerUI statManager;
+
+    //references to the skinned mesh rendered (to 'turn off' the player model when they die and are replaced by the ragdoll)
     [SerializeField] private SkinnedMeshRenderer body;
     [SerializeField] private SkinnedMeshRenderer eyes;
 
+    //variable for the XPGainUI manager
+    [SerializeField] private XPGainUI xpGainUI;
+
+    //reference to the ragdoll prefab of the player model
     [SerializeField] private GameObject ragDoll;
 
+    //reference to the death screen overlay
     [SerializeField] private GameObject deathScreen;
 
+    //variable for changing parameters on the rigidbody
     private Rigidbody rbody;
 
     //variable for adjusting the rate at which the character falls
     public float gravityModifier = 2.5f;
     public float lowJumpMultipier = 2f;
 
-    //The base move and turn speed
+    //The base move speed of the character and turn speed of the camera
     public float moveSpeed = 1f;
     public float turnSpeed = 45f;
     public float jumpHeight = 2f;
 
+    //varaibes for handling the character turning relative to the direction the camera is pointing
     public float turnSmoothTime = 1f;
     private float turnSmoothVelocity;
 
     //The base lock picking skill which will determine how likely the player is to open a chest
     public int lockPickSkill;
 
-    //The move and turn speed with the buffs you have from leveling up.   
+    //The move speed, turn speed and jump height with the buffs you have from leveling up.   
     public float currentMoveSpeed;
     public float currentTurnSpeed;
     public float currentJumpHeight;
@@ -56,39 +72,63 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
     public float xpForNextLevel = 10;   //Xp needed to level up, the higher the level, the harder it gets. 
     public int level = 0;   // Level of the player
 
-    [SerializeField] private Vector3 spawn;
+    //position which the player will be teleported to when respawning
+    private Vector3 spawn;
 
+    //reference to the animation manager script
     private AnimationManager animManager;
 
+    //variables for handling the movement of the player
     private Vector3 motion;
     private Vector2 input;
 
     private void Awake()
     {
+        //making sure the meshrenderers of the character model are enabled & the death screen is disabled
         body.enabled = true;
         eyes.enabled = true;
         deathScreen.SetActive(false);
+
+        //set the cam variable
+        if(cam == null)
+        {
+            cam = GameObject.FindGameObjectWithTag("MainCamera").transform;
+        }
     }
 
     private void Start()
     {
+        //set the spawn point of the player to wherever the character model is placed in the Unity inspector
         SetRespawn();
         
+        //initialize all the current stats of the player based on the base stats
         SetXpForNextLevel();
         SetCurrentMoveSpeed();
         SetCurrentTurnSpeed();
         SetCurrentJumpHeight();
         SetCurrentLockPickSkill();
+        statManager.UpdateTexts(level, currentLockPickSkill, currentMoveSpeed, currentTurnSpeed, currentJumpHeight, xp, xpForNextLevel);
 
-        animManager = GetComponent<AnimationManager>();
-        cam.TryGetComponent<CinemachineBrain>(out brain);
-
-        if (!gameObject.TryGetComponent<Rigidbody>(out rbody))
+        //set the animation manager and cinemachine brain        
+        if(!TryGetComponent<AnimationManager>(out animManager))
         {
-            Debug.LogError("You need a Rigidbody component on this game object.");
+            Debug.LogError("You need an AnimationManager component on the game object.");
         }
+
+        if(!cam.TryGetComponent<CinemachineBrain>(out brain))
+        {
+            Debug.LogError("You need a Cinemachine brain component on the main camera!");
+        }
+        //set the rigidbody
+        if (!TryGetComponent<Rigidbody>(out rbody))
+        {
+            Debug.LogError("You need a Rigidbody component on this game object!");
+        }      
+        
     }
 
+    //methods for levelling and updating stats
+    #region
     // To level up you need to collect an amount of xp;
     // This starts at 10 xp
     // Each level you gain the xp required gets higher exponentially
@@ -97,14 +137,14 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
     void SetXpForNextLevel()
     {
         xpForNextLevel = (10f + (level * level * 0.1f));
-        Debug.Log("xpForNextLevel " + xpForNextLevel);
+        //Debug.Log("xpForNextLevel " + xpForNextLevel);
     }
 
     // For each level, the player adds 10% to the move speed 
     void SetCurrentMoveSpeed()
     {
         currentMoveSpeed = this.moveSpeed + (this.moveSpeed * 0.1f * level);
-        Debug.Log("currentMoveSpeed = " + currentMoveSpeed);
+        //Debug.Log("currentMoveSpeed = " + currentMoveSpeed);
     }
 
     //For each level, the player will gain an additional 10% jump height. Very cool!
@@ -112,7 +152,7 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
     {
         currentJumpHeight = this.jumpHeight + (this.jumpHeight * 0.1f * level);
         lowJumpMultipier = currentJumpHeight / 2;
-        Debug.Log("currentJumpHeigh = " + currentJumpHeight);
+        //Debug.Log("currentJumpHeigh = " + currentJumpHeight);
     }
 
     // For each level, the player adds 10% to the turn speed 
@@ -120,7 +160,7 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
     {
         currentTurnSpeed = this.turnSpeed + (this.turnSpeed * (level * 0.1f));
         cinemachine.m_XAxis.m_MaxSpeed = currentTurnSpeed;
-        Debug.Log("currentTurnSpeed = " + currentTurnSpeed);
+        //Debug.Log("currentTurnSpeed = " + currentTurnSpeed);
     }
 
     //For each level the player adds their current level to their initial lockPickSkill
@@ -133,21 +173,27 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
     {
         xp = 0f;
         level++;
-        Debug.Log("level" + level);
+        //Debug.Log("level" + level);
         SetXpForNextLevel();
         SetCurrentMoveSpeed();
         SetCurrentTurnSpeed();
         SetCurrentJumpHeight();
         //call the SetCurrentLockPickSkill method
         SetCurrentLockPickSkill();
+
+        //update the UI with all the information
     }
 
     //a function to make the player gain the amount of Xp the you tell it. 
     public void GainXP(int xpToGain)
     {
         xp += xpToGain;
-        Debug.Log("Gained " + xpToGain + " XP, Current Xp = " + xp + ", XP needed to reach next Level = " + xpForNextLevel);
+        statManager.UpdateTexts(level, currentLockPickSkill, currentMoveSpeed, currentTurnSpeed, currentJumpHeight, xp, xpForNextLevel);
+
+        //Debug.Log("Gained " + xpToGain + " XP, Current Xp = " + xp + ", XP needed to reach next Level = " + xpForNextLevel);
     }
+    #endregion
+
 
     void Update()
     {
@@ -161,33 +207,27 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
         if (xp >= xpForNextLevel)
         {
             LevelUp();
+            xpGainUI.LevelUp();
+            statManager.UpdateTexts(level, currentLockPickSkill, currentMoveSpeed, currentTurnSpeed, currentJumpHeight, xp, xpForNextLevel);
+
         }
-    #endregion
+        #endregion
 
 
         //movement: jumping, running, turning and falling code.
         #region
-        // Check spacebar to trigger jumping. Checks if vertical velocity (eg velocity.y) is near to zero.
-        //if (Input.GetButtonDown("Jump") == true && Mathf.Abs(this.GetComponent<Rigidbody>().velocity.y) < 0.01f && !animManager.fall)
-        //replacing the above line of code with the below one since checking the vertical velocity stops you from being able to junmp while running down a ramp. Checking the animation manager state should cover it.
+        // Check spacebar to trigger jumping. Checks if vertical velocity (eg velocity.y) is near to zero.        
         if (Input.GetButtonDown("Jump") == true && !animManager.fall)
         {
             Jump(1, 1);
         }
-        //checks to see if the player is falling without having hit jump and triggers the falling animation 
-        //needs to be tweaked; if moving down a sloped surface the player will go into the falling animation
-        //possibly replace with an 'OnTriggerExit' on AnimationManager to check if the player's trigger is no longer touching the ground.        
-        /*
-        else if (Mathf.Abs(this.GetComponent<Rigidbody>().velocity.y) > 0.01f && animManager.fall == false)
-        {
-            animManager.JumpAnim();
-        }*/
+
         //checks if the player is current descending and increases their fall rate by the gravityModifier
         if(this.GetComponent<Rigidbody>().velocity.y < 0 && animManager.fall == true)
         {
             this.GetComponent<Rigidbody>().velocity += Vector3.up * Physics.gravity.y * (gravityModifier - 1) * Time.deltaTime;
         }
-        //checks if tthe player is still holding down spacebar; if not, the effect of gravity is increased so they perform a smaller 'hop'
+        //checks if tthe player is still holding down jump button; if not, the effect of gravity is increased so they perform a smaller 'hop'
         else if(Mathf.Abs(this.GetComponent<Rigidbody>().velocity.y) > 0.01f && !Input.GetButton("Jump"))
         {
             this.GetComponent<Rigidbody>().velocity += Vector3.up * Physics.gravity.y * (lowJumpMultipier - 1) * Time.deltaTime;
@@ -196,95 +236,40 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
         // Rotation and movement speed is modifed by the level (currentMoveSpeed) of the player and by the time between update frames (Time.deltaTime). 
 
 
-        // Move player via up/down arrow keys               
-
+        // Move player via horizontal / vertical inputs             
+        //take the axis of the inputs and assign them to part of 'input' vector 2
         input.x = Input.GetAxis("Vertical");
         input.y = Input.GetAxis("Horizontal");
-        motion = new Vector3(input.y, 0, input.x).normalized;
+        motion = new Vector3(input.y, 0, input.x).normalized; //combine the inputs into a single vector 3
 
+        //check if any inputs are active
         if (motion.magnitude >= 0.1)
         {
+            //turn the character towards the directions dicated by the inputs (the combined average of the two directions) modified by the current direction of the third person camera
             float targetAngle = Mathf.Atan2(motion.x, motion.z) * Mathf.Rad2Deg + cam.eulerAngles.y;
-            float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
-            transform.rotation = Quaternion.Euler(0f, angle, 0f);
-            Vector3 moveDir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
+            float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime); //smooth the rotation angle for the player to face in the direction they are moving
+            transform.rotation = Quaternion.Euler(0f, angle, 0f); //rotate the character to face the direction they are moving relative to the direction of the camera
+            Vector3 moveDir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward; // calculate the direction to move the character
 
+            //update the character's position based on the inputs received modified by the current movement speed
             transform.position += new Vector3(moveDir.x, 0, moveDir.z) * currentMoveSpeed * Time.deltaTime;
+            //check if the player is currently falling; if not, switch the animation from idle to running
             if (animManager.fall == false)
             {
                 animManager.ToggleRun(true);
             }
                        
-        }
-        /* this part of the script is from having the tank controls active.
-        else if(motion.x < 0)
-        {
-            transform.position += -transform.forward * currentMoveSpeed * Time.deltaTime;
-            if (animManager.fall == false)
-            {
-                animManager.ToggleRun(true);
-            }
-
-        }*/
+        }        
+        //if there is no input happening switch the animation to idle
         else
         {
             animManager.ToggleRun(false);
-        }
-
-
-        /*
-        if(motion.x > 0)
-        {
-            //cause the player to move forward relative to their own current rotation at the current movement speed
-            transform.position += transform.forward * currentMoveSpeed * Time.deltaTime;
-            Vector3 currentDir = transform.forward;
-            //transform.forward = Vector3.Slerp(currentDir, new Vector3(transform.position.x, transform.position.y, cam.transform.forward.z), currentTurnSpeed * Time.deltaTime);
-            if (animManager.fall == false)
-            {
-                animManager.ToggleRun(true);
-            }
-        }   
-        else if(motion.x < 0)
-        {
-            transform.position += transform.forward * -currentMoveSpeed * Time.deltaTime;
-            Vector3 currentDir = transform.forward;
-            //transform.forward = Vector3.Slerp(currentDir, new Vector3(transform.position.x, transform.position.y, -cam.position.z), currentTurnSpeed * Time.deltaTime);
-            if (animManager.fall == false)
-            {
-                animManager.ToggleRun(true);
-            }
-        }
-        else if(motion.z > 0)
-        {
-            transform.position += transform.forward * currentMoveSpeed * Time.deltaTime;
-            Vector3 currentDir = transform.forward;
-            //transform.forward = Vector3.Slerp(currentDir, cam.transform.right, currentTurnSpeed * Time.deltaTime);
-            if (animManager.fall == false)
-            {
-                animManager.ToggleRun(true);
-            }
-        }
-        else if(motion.z < 0)
-        {
-            transform.position += transform.forward * currentMoveSpeed * Time.deltaTime;
-            Vector3 currentDir = transform.forward;
-            //transform.forward = Vector3.Slerp(currentDir, -cam.transform.right, currentTurnSpeed * Time.deltaTime);
-            if (animManager.fall == false)
-            {
-                animManager.ToggleRun(true);
-            }
-        }
-
-       */
-        //commented out the code for turning with the arrow keys as tank controls are gross for a platformer
-
-        // Rotate player via left/right arrow keys
-        // Identify this position, set the vertical axis as the axis to rotate around the set the rotation speed.
-        /*if (Input.GetAxisRaw("Horizontal") > 0) { this.transform.RotateAround(this.transform.position, Vector3.up, currentTurnSpeed * Time.deltaTime); }
-        if (Input.GetAxisRaw("Horizontal") < 0) { this.transform.RotateAround(this.transform.position, Vector3.up, -currentTurnSpeed * Time.deltaTime); }*/
+        }        
         #endregion
     }
 
+
+    //self contained method for jumping which other scripts can call with applied modifiers
     public void Jump(int jumpMod, int jumpType)
     {        
         this.GetComponent<Rigidbody>().velocity += Vector3.up * this.currentJumpHeight * jumpMod;
@@ -298,11 +283,13 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
         }
     }
 
+    //method to update the player's respawn position to their current transform position
     public void SetRespawn()
     {
         spawn = new Vector3(transform.position.x, transform.position.y + 1, transform.position.z);
     }
 
+    //method for handling different death 'types' 
     public void Death(int deathType)
     {
         //deathType 1 = falling with lives left
@@ -324,16 +311,19 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
         }
     }
 
+    //method for instantiating the ragdoll when the player dies
     public void RagDoll()
     {
+        //disable the meshrenderers on the player character
         body.enabled = false;
         eyes.enabled = false;
+        //spawn in the ragdoll prefab on the player's current position
         Instantiate(ragDoll, transform.position, transform.rotation);
     }
 
-    IEnumerator FallRespawn()    {
-
-
+    //enumerator method for respawning the player when they fall, including stopping the camera from chasing them down and activating a 'death screen' overlay
+    IEnumerator FallRespawn()    
+    {
         //decouple the camera from the player
         brain.enabled = false;
 
@@ -353,8 +343,10 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
         brain.enabled = true;
     }
 
+    //enumerator for when the player falls to their death without any health/lives remaining
     IEnumerator FallDeath()
     {
+        //disable the camera's cinemachine brain so it doesn't follow them through the fog
         brain.enabled = false;
 
         //show the 'YOU DIED' ui element
@@ -368,15 +360,17 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
         //recouple the camera to the player
         brain.enabled = true;
 
+        //reload the entire scene
         SceneManager.LoadScene("GameScene");
     }
 
+    //enumerator for when the player dies due to damage from enemies or traps
     IEnumerator DamageDeath()
     {
+        //disable the camera brain so it doesn't follow the player (if they end up falling off the edge)
         brain.enabled = false;
 
-        //spawn the ragdoll
-        Jump(5, 2);
+        //spawn the ragdoll        
         RagDoll();
 
         //show the 'YOU DIED' ui element
@@ -390,17 +384,20 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
         //recouple the camera to the player
         brain.enabled = true;
 
+        //reload the game scene to start over
         SceneManager.LoadScene("GameScene");
     }
 
+    //ontriggerenter method for performing a 'goomba stomp' on the enemies.
     private void OnTriggerEnter(Collider other)
-    {
-        
+    {        
         Enemy enemy;
         //execute the 'death' method on the enemy.
         if (other.TryGetComponent<Enemy>(out enemy))
         {
+            //call the death function on the enemy being stomped
             enemy.Death();
+            //
             Jump(1, 1);
         }
     }

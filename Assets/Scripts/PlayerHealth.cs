@@ -17,11 +17,13 @@ public class PlayerHealth : MonoBehaviour
 
     private void Awake()
     {
+        //set the curent health to the maximum health
         currentHealth = maxHealth;
     }
 
     void Start()
     {
+        //assign the player controller variable
         if(!GameObject.FindGameObjectWithTag("Player").TryGetComponent<PlayerControllerThatLevelsUp>(out controller))
         {
             Debug.LogError("You need to have a component with the tag 'Player'!");
