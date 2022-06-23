@@ -20,6 +20,7 @@ public class Coin : MonoBehaviour
     public int xpValue = 1;
 
     [SerializeField] private XPGainUI xpGainUI;
+    [SerializeField] private PlayerControllerThatLevelsUp pController;
 
     public enum CoinType { OneXP, TenXP }
     public CoinType coinType;
@@ -38,10 +39,11 @@ public class Coin : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         //check if the object entering the trigger is the player
-        if (other.gameObject.tag == "Player")
+        if (other.gameObject.TryGetComponent<PlayerControllerThatLevelsUp>(out pController))
         {
             //call the GainXP method on the player
-            other.gameObject.GetComponent<PlayerControllerThatLevelsUp>().GainXP(xpValue);
+            pController.GainXP(xpValue);
+
             //Debug.Log("The coin was collected");            
             if (coinType == CoinType.OneXP)
             {
@@ -51,7 +53,6 @@ public class Coin : MonoBehaviour
             {
                 xpGainUI.TenXP();
             }
-
 
             //remove this coin from the game scene
             Destroy(this.gameObject);

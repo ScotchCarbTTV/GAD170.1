@@ -22,12 +22,11 @@ public class SimpleChest : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.GetComponent<PlayerControllerThatLevelsUp>())
+        if (other.gameObject.TryGetComponent<PlayerControllerThatLevelsUp>(out playerControllerThatLevelsUp))
         {
-            playerControllerThatLevelsUp = other.gameObject.GetComponent<PlayerControllerThatLevelsUp>();
             //PlayerControllerThatLevelsUp must have a int variable called ”currentLockPickSkill”
             CheckIfLockPickIsSuccessful();
-        }
+        }        
     }
 
 

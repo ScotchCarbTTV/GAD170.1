@@ -201,8 +201,8 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
         //Test the GainXp function by pressing the x button. 
         if (Input.GetKeyDown(KeyCode.X) == true) { GainXP(10); }
 
-    //levelling up code
-    #region
+        //levelling up code
+        #region
         //LevelUp when the appropriate conditions are met.
         if (xp >= xpForNextLevel)
         {
@@ -222,15 +222,16 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
             Jump(1, 1);
         }
 
+
         //checks if the player is current descending and increases their fall rate by the gravityModifier
-        if(this.GetComponent<Rigidbody>().velocity.y < 0 && animManager.fall == true)
+        if(rbody.velocity.y < 0 && animManager.fall == true)
         {
-            this.GetComponent<Rigidbody>().velocity += Vector3.up * Physics.gravity.y * (gravityModifier - 1) * Time.deltaTime;
+            rbody.velocity += Vector3.up * Physics.gravity.y * (gravityModifier - 1) * Time.deltaTime;
         }
         //checks if tthe player is still holding down jump button; if not, the effect of gravity is increased so they perform a smaller 'hop'
-        else if(Mathf.Abs(this.GetComponent<Rigidbody>().velocity.y) > 0.01f && !Input.GetButton("Jump"))
+        else if(Mathf.Abs(rbody.velocity.y) > 0.01f && !Input.GetButton("Jump"))
         {
-            this.GetComponent<Rigidbody>().velocity += Vector3.up * Physics.gravity.y * (lowJumpMultipier - 1) * Time.deltaTime;
+            rbody.velocity += Vector3.up * Physics.gravity.y * (lowJumpMultipier - 1) * Time.deltaTime;
         }
 
         // Rotation and movement speed is modifed by the level (currentMoveSpeed) of the player and by the time between update frames (Time.deltaTime). 
@@ -253,6 +254,9 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
 
             //update the character's position based on the inputs received modified by the current movement speed
             transform.position += new Vector3(moveDir.x, 0, moveDir.z) * currentMoveSpeed * Time.deltaTime;
+
+            //update the rigidbody's velocity according to the inputs received
+
             //check if the player is currently falling; if not, switch the animation from idle to running
             if (animManager.fall == false)
             {
@@ -272,7 +276,7 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
     //self contained method for jumping which other scripts can call with applied modifiers
     public void Jump(int jumpMod, int jumpType)
     {        
-        this.GetComponent<Rigidbody>().velocity += Vector3.up * this.currentJumpHeight * jumpMod;
+        rbody.velocity += Vector3.up * this.currentJumpHeight * jumpMod;
         if (jumpType == 1)
         {
             animManager.JumpAnim();

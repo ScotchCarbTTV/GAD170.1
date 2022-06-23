@@ -35,7 +35,7 @@ public class PlayerHealth : MonoBehaviour
     {
         //reduce player health by 1
         currentHealth--;
-        Debug.Log(currentHealth);
+        //Debug.Log(currentHealth);
         //update the player health UI element
         hDisplay.SetHealthIcon(currentHealth);        
     }
