@@ -24,8 +24,8 @@ public class Enemy : MonoBehaviour
 
     private Transform target;
 
-    
-    
+
+
 
     private void Awake()
     {
@@ -43,8 +43,8 @@ public class Enemy : MonoBehaviour
         StateMachine.SetState(new EnemyPatrol(this));
 
         //set up the patrolArea vector based on the position of the patrol node
-        if(patrolNode != null) 
-        { 
+        if (patrolNode != null)
+        {
             patrolArea = new Vector2(patrolNode.transform.position.x, patrolNode.transform.position.z);
         }
     }
@@ -74,7 +74,7 @@ public class Enemy : MonoBehaviour
         }
 
         public virtual void OnExit()
-        {            
+        {
         }
 
         public virtual void OnUpdate()
@@ -131,13 +131,13 @@ public class Enemy : MonoBehaviour
                 instance.Patrol();
             }
         }
-    }   
+    }
 
     public void Death()
     {
-        Instantiate(coin, new Vector3(transform.position.x + 1, transform.position.y + 1, transform.position.z +1), transform.rotation);
+        Instantiate(coin, new Vector3(transform.position.x + 1, transform.position.y + 1, transform.position.z + 1), transform.rotation);
         Instantiate(coin, new Vector3(transform.position.x, transform.position.y + 2, transform.position.z), transform.rotation);
-        Instantiate(coin, new Vector3(transform.position.x -1, transform.position.y + 1, transform.position.z -1), transform.rotation);
+        Instantiate(coin, new Vector3(transform.position.x - 1, transform.position.y + 1, transform.position.z - 1), transform.rotation);
         gameObject.SetActive(false);
     }
 

@@ -25,15 +25,15 @@ public class Hazard : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         //check if an object entering the collider is the Player
-        if(other.tag == "Player")
+        if (other.tag == "Player")
         {
             //check if they are currently invulnerable
             if (invuln == false)
             {
-                if(pHealth.currentHealth != 0)
+                if (pHealth.currentHealth != 0)
                 {
                     //call the Invuln method
-                    StartCoroutine(Invuln()); 
+                    StartCoroutine(Invuln());
                 }
             }
         }

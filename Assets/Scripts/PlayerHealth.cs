@@ -24,11 +24,11 @@ public class PlayerHealth : MonoBehaviour
     void Start()
     {
         //assign the player controller variable
-        if(!GameObject.FindGameObjectWithTag("Player").TryGetComponent<PlayerControllerThatLevelsUp>(out controller))
+        if (!GameObject.FindGameObjectWithTag("Player").TryGetComponent<PlayerControllerThatLevelsUp>(out controller))
         {
             Debug.LogError("You need to have a component with the tag 'Player'!");
             gameObject.SetActive(false);
-        }        
+        }
     }
 
     public void LoseHealth()
@@ -37,7 +37,7 @@ public class PlayerHealth : MonoBehaviour
         currentHealth--;
         //Debug.Log(currentHealth);
         //update the player health UI element
-        hDisplay.SetHealthIcon(currentHealth);        
+        hDisplay.SetHealthIcon(currentHealth);
     }
 
 }

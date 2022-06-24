@@ -15,7 +15,7 @@ public class StatManagerUI : MonoBehaviour
     [SerializeField] TextMeshProUGUI currentXPText;
     [SerializeField] TextMeshProUGUI requiredXPText;
 
-    public void UpdateTexts(float level, float lockPick, float speed, 
+    public void UpdateTexts(float level, float lockPick, float speed,
         float turn, float jump, float current, float required)
     {
         levelText.text = "Level:\n" + level;

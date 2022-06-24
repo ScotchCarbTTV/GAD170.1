@@ -90,7 +90,7 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
         deathScreen.SetActive(false);
 
         //set the cam variable
-        if(cam == null)
+        if (cam == null)
         {
             cam = GameObject.FindGameObjectWithTag("MainCamera").transform;
         }
@@ -100,7 +100,7 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
     {
         //set the spawn point of the player to wherever the character model is placed in the Unity inspector
         SetRespawn();
-        
+
         //initialize all the current stats of the player based on the base stats
         SetXpForNextLevel();
         SetCurrentMoveSpeed();
@@ -110,12 +110,12 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
         statManager.UpdateTexts(level, currentLockPickSkill, currentMoveSpeed, currentTurnSpeed, currentJumpHeight, xp, xpForNextLevel);
 
         //set the animation manager and cinemachine brain        
-        if(!TryGetComponent<AnimationManager>(out animManager))
+        if (!TryGetComponent<AnimationManager>(out animManager))
         {
             Debug.LogError("You need an AnimationManager component on the game object.");
         }
 
-        if(!cam.TryGetComponent<CinemachineBrain>(out brain))
+        if (!cam.TryGetComponent<CinemachineBrain>(out brain))
         {
             Debug.LogError("You need a Cinemachine brain component on the main camera!");
         }
@@ -123,8 +123,8 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
         if (!TryGetComponent<Rigidbody>(out rbody))
         {
             Debug.LogError("You need a Rigidbody component on this game object!");
-        }      
-        
+        }
+
     }
 
     //methods for levelling and updating stats
@@ -197,7 +197,7 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
 
     void Update()
     {
-        
+
         //Test the GainXp function by pressing the x button. 
         if (Input.GetKeyDown(KeyCode.X) == true) { GainXP(10); }
 
@@ -224,12 +224,12 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
 
 
         //checks if the player is current descending and increases their fall rate by the gravityModifier
-        if(rbody.velocity.y < 0 && animManager.fall == true)
+        if (rbody.velocity.y < 0 && animManager.fall == true)
         {
             rbody.velocity += Vector3.up * Physics.gravity.y * (gravityModifier - 1) * Time.deltaTime;
         }
         //checks if tthe player is still holding down jump button; if not, the effect of gravity is increased so they perform a smaller 'hop'
-        else if(Mathf.Abs(rbody.velocity.y) > 0.01f && !Input.GetButton("Jump"))
+        else if (Mathf.Abs(rbody.velocity.y) > 0.01f && !Input.GetButton("Jump"))
         {
             rbody.velocity += Vector3.up * Physics.gravity.y * (lowJumpMultipier - 1) * Time.deltaTime;
         }
@@ -262,26 +262,26 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
             {
                 animManager.ToggleRun(true);
             }
-                       
-        }        
+
+        }
         //if there is no input happening switch the animation to idle
         else
         {
             animManager.ToggleRun(false);
-        }        
+        }
         #endregion
     }
 
 
     //self contained method for jumping which other scripts can call with applied modifiers
     public void Jump(float jumpMod, int jumpType)
-    {        
+    {
         rbody.velocity += Vector3.up * this.currentJumpHeight * jumpMod;
         if (jumpType == 1)
         {
             animManager.JumpAnim();
         }
-        else if(jumpType == 2)
+        else if (jumpType == 2)
         {
             animManager.Ouchie();
         }
@@ -299,13 +299,13 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
         //deathType 1 = falling with lives left
         //deathType 2 = falling no lives left
         //deathType 3 = died to 
-        
+
 
         if (deathType == 1)
         {
             StartCoroutine(FallRespawn());
         }
-        else if(deathType == 2)
+        else if (deathType == 2)
         {
             StartCoroutine(FallDeath());
         }
@@ -326,7 +326,7 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
     }
 
     //enumerator method for respawning the player when they fall, including stopping the camera from chasing them down and activating a 'death screen' overlay
-    IEnumerator FallRespawn()    
+    IEnumerator FallRespawn()
     {
         //decouple the camera from the player
         brain.enabled = false;
@@ -337,11 +337,11 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
         yield return new WaitForSeconds(3);
 
         //clear 'YOU DIED' ui element
-        
-            //move the player 
+
+        //move the player 
         rbody.velocity = Vector3.zero; //prevents the player clipping through the ground when they respawn
         this.transform.position = spawn;
-        
+
 
         //recouple the camera to the player
         brain.enabled = true;
@@ -394,7 +394,7 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
 
     //ontriggerenter method for performing a 'goomba stomp' on the enemies.
     private void OnTriggerEnter(Collider other)
-    {        
+    {
         Enemy enemy;
         //execute the 'death' method on the enemy.
         if (other.TryGetComponent<Enemy>(out enemy))
@@ -405,7 +405,7 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
                 enemy.Death();
                 Jump(1.5f, 1);
             }
-            
+
         }
     }
 

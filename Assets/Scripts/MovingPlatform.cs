@@ -24,7 +24,7 @@ public class MovingPlatform : MonoBehaviour
     private Animator animator;
 
     private Vector3 direction = new Vector3();
-    
+
     //public enum Axis { X_AXIS, Y_AXIS, Z_AXIS }
 
     //public Axis axis;
@@ -62,10 +62,10 @@ public class MovingPlatform : MonoBehaviour
         #endregion
 
         //check if the platform is within the stopping distance of the target position
-        if(Vector3.Distance(transform.position, targetPoint.transform.position) < 0.5f)
+        if (Vector3.Distance(transform.position, targetPoint.transform.position) < 0.5f)
         {
             //change the target position to the currently non-active target position
-            if(targetPoint == pointA)
+            if (targetPoint == pointA)
             {
                 targetPoint = pointB;
             }
@@ -86,7 +86,7 @@ public class MovingPlatform : MonoBehaviour
     {
         //set the parent of the player to this object
         other.transform.parent = this.transform;
-        
+
     }
 
     private void OnTriggerExit(Collider other)

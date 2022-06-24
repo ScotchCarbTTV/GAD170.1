@@ -33,7 +33,7 @@ public class Coin : MonoBehaviour
     void Update()
     {
         //each frame rotate the object according to the spin speed modified by the framerate vs real time
-        this.transform.Rotate(0f, Time.deltaTime * this.spinSpeed, 0f );
+        this.transform.Rotate(0f, Time.deltaTime * this.spinSpeed, 0f);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -49,7 +49,7 @@ public class Coin : MonoBehaviour
             {
                 xpGainUI.OneXP();
             }
-            else if(coinType == CoinType.TenXP)
+            else if (coinType == CoinType.TenXP)
             {
                 xpGainUI.TenXP();
             }

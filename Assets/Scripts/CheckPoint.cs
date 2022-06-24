@@ -19,7 +19,7 @@ public class CheckPoint : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         //checks if an object entering the trigger is the player and sets their spawn to their current location & marks the checkpoint as visited.
-        if(other.TryGetComponent<PlayerControllerThatLevelsUp>(out pController))
+        if (other.TryGetComponent<PlayerControllerThatLevelsUp>(out pController))
         {
             if (!_checked)
             {

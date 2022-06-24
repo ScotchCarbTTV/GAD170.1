@@ -8,7 +8,7 @@ public class XPGainUI : MonoBehaviour
     [SerializeField] private GameObject prefabOneXP;
     [SerializeField] private GameObject prefabTenXP;
     [SerializeField] private GameObject prefabLevelUp;
-    
+
     void Update()
     {
         //rotate the canvas to always face the main camera
@@ -30,7 +30,7 @@ public class XPGainUI : MonoBehaviour
         StartCoroutine(ShowLevelUp());
     }
 
-    private IEnumerator  ShowOneXP()
+    private IEnumerator ShowOneXP()
     {
         GameObject oneXP = Instantiate(prefabOneXP, transform.position, transform.rotation, gameObject.transform);
 

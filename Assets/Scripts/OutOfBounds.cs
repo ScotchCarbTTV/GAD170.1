@@ -24,8 +24,8 @@ public class OutOfBounds : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        
-        if(other.tag == "Player")
+
+        if (other.tag == "Player")
         {
             //when the player leaves  the trigger (falls out of the world)
             //check if they have more than 0 health

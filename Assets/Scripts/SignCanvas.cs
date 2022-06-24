@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class SignCanvas : MonoBehaviour
 
-{    void Update()
+{
+    void Update()
     {
         //rotate the canvas to always face the main camera
         transform.forward = Camera.main.transform.forward;

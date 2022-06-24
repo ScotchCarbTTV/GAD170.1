@@ -11,7 +11,7 @@ public class HealthDisplay : MonoBehaviour
     [SerializeField] private Sprite[] prefabs;
     //variable for storing the current health icon
     [SerializeField] private Sprite currentHealthIcon;
-   
+
 
     private void Start()
     {

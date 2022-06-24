@@ -21,7 +21,7 @@ public class Sign : MonoBehaviour
     bool inRange;
 
     private void Start()
-    {        
+    {
         GameObject.FindGameObjectWithTag("FreeLook").TryGetComponent<CinemachineFreeLook>(out freeLook);
         focal = GameObject.FindGameObjectWithTag("FreelookFocal");
         panel.SetActive(false);
@@ -39,7 +39,7 @@ public class Sign : MonoBehaviour
 
     public void TogglePanel()
     {
-        if(panel.activeSelf == false)
+        if (panel.activeSelf == false)
         {
             panel.SetActive(true);
             freeLook.LookAt = signFocal.transform;
@@ -63,11 +63,11 @@ public class Sign : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if(other.gameObject.tag == "Player")
+        if (other.gameObject.tag == "Player")
         {
             inRange = false;
             prompt.SetActive(false);
-            if(panel.activeSelf == true)
+            if (panel.activeSelf == true)
             {
                 TogglePanel();
             }

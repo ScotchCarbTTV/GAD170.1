@@ -13,7 +13,7 @@ public class AnimationManager : MonoBehaviour
     private void Awake()
     {
         //assign the animator variable
-        TryGetComponent<Animator>(out animator);        
+        TryGetComponent<Animator>(out animator);
     }
     void Start()
     {
@@ -28,9 +28,9 @@ public class AnimationManager : MonoBehaviour
     {
         //when the player enters the trigger of any object tagged as ground switch falling to false and set the animation state back to idle
         if (other.gameObject.tag == "Ground")
-        {            
-            StopJump();                       
-        }        
+        {
+            StopJump();
+        }
     }
 
     private void OnTriggerStay(Collider other)
@@ -52,7 +52,7 @@ public class AnimationManager : MonoBehaviour
     }
 
     public void JumpAnim()
-    {   
+    {
         //set falling to true when jumping is triggered
         ToggleFall(true);
     }
@@ -61,7 +61,7 @@ public class AnimationManager : MonoBehaviour
     public void Ouchie()
     {
         //set the animator state to 'flinching'
-        animator.SetBool("flinching", true);        
+        animator.SetBool("flinching", true);
 
         //toggle falling to true
         if (!fall)
@@ -88,7 +88,7 @@ public class AnimationManager : MonoBehaviour
         if (run == true)
         {
             animator.SetBool("isRunning", true);
-           
+
         }
         else
         {
@@ -99,7 +99,7 @@ public class AnimationManager : MonoBehaviour
     public void ToggleFall(bool fall_)
     {
         //switches the player's falling animation on and off in the animaor
-        if(fall_ == true)
+        if (fall_ == true)
         {
             animator.SetBool("isFalling", true);
             fall = true;
