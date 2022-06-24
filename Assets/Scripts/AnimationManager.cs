@@ -5,7 +5,7 @@ using UnityEngine;
 public class AnimationManager : MonoBehaviour
 {
     //variable to reference the animator component on this 
-    private Animator animator;
+    public Animator animator;
 
     //variable for setting if the player is grounded or not
     public bool fall { get; private set; }

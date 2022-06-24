@@ -274,7 +274,7 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
 
 
     //self contained method for jumping which other scripts can call with applied modifiers
-    public void Jump(int jumpMod, int jumpType)
+    public void Jump(float jumpMod, int jumpType)
     {        
         rbody.velocity += Vector3.up * this.currentJumpHeight * jumpMod;
         if (jumpType == 1)
@@ -399,10 +399,13 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
         //execute the 'death' method on the enemy.
         if (other.TryGetComponent<Enemy>(out enemy))
         {
-            //call the death function on the enemy being stomped
-            enemy.Death();
-            //
-            Jump(1, 1);
+            if (animManager.animator.GetBool("flinching") == false)
+            {
+                //call the death function on the enemy being stomped
+                enemy.Death();
+                Jump(1.5f, 1);
+            }
+            
         }
     }
 

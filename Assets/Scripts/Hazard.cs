@@ -30,8 +30,11 @@ public class Hazard : MonoBehaviour
             //check if they are currently invulnerable
             if (invuln == false)
             {
-                //call the Invuln method
-                StartCoroutine(Invuln());
+                if(pHealth.currentHealth != 0)
+                {
+                    //call the Invuln method
+                    StartCoroutine(Invuln()); 
+                }
             }
         }
     }
@@ -46,8 +49,6 @@ public class Hazard : MonoBehaviour
             invuln = true;
             //deduct health from the player
             pHealth.LoseHealth();
-            //make the player 'jump' away from the hazad
-            pController.Jump(2, 2);
             //wait for a moment
             yield return new WaitForSeconds(1.5f);
             //remove invulnerability
