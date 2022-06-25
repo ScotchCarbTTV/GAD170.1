@@ -100,7 +100,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.7802198, y: 1}
+    m_SensorSize: {x: 1.7785388, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -260,7 +260,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1023323289611013314}
-  m_LocalRotation: {x: -0.10462153, y: 0.000000017637797, z: 0.0000000018554761, w: 0.99451214}
+  m_LocalRotation: {x: -0.10462153, y: -0.000000017638994, z: -0.000000001855602, w: 0.99451214}
   m_LocalPosition: {x: 0, y: -2.9999998, z: -5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -305,7 +305,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.7802198, y: 1}
+    m_SensorSize: {x: 1.7785388, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -687,7 +687,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1708811479122930447}
-  m_LocalRotation: {x: -0.086514555, y: 0.00000001766943, z: 0.000000001534416, w: 0.9962506}
+  m_LocalRotation: {x: -0.086514555, y: -0.000000017669434, z: -0.0000000015344164, w: 0.9962506}
   m_LocalPosition: {x: 0, y: -2.9999998, z: -5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -732,7 +732,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.7802198, y: 1}
+    m_SensorSize: {x: 1.7785388, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -987,7 +987,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3285048112120020114}
-  m_LocalRotation: {x: -0.12264621, y: -0.000000019092086, z: -0.0000000023593845, w: 0.9924505}
+  m_LocalRotation: {x: -0.12264621, y: 0.000000019092086, z: 0.0000000023593845, w: 0.9924505}
   m_LocalPosition: {x: 0, y: -2.9999998, z: -5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1032,7 +1032,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.7802198, y: 1}
+    m_SensorSize: {x: 1.7785388, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -1235,6 +1235,8 @@ GameObject:
   - component: {fileID: 4232957429012299100}
   - component: {fileID: 4232957429012299099}
   - component: {fileID: 4232957429012299096}
+  - component: {fileID: -6155799712856623603}
+  - component: {fileID: 6136705186510656363}
   m_Layer: 0
   m_Name: Jumpman 0.5
   m_TagString: Player
@@ -1337,6 +1339,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5845d0f51c12c64d837f8fbbb14a4e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  animator: {fileID: 0}
 --- !u!114 &4232957429012299096
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1349,11 +1352,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 851dbe4a7f8f34048a8bd6552db4000d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cam: {fileID: 0}
+  brain: {fileID: 0}
+  cinemachine: {fileID: 0}
+  source: {fileID: 0}
+  footClip: {fileID: 0}
+  jumpClip: {fileID: 0}
+  oofClip: {fileID: 0}
+  crunchClip: {fileID: 0}
+  statManager: {fileID: 0}
+  body: {fileID: 0}
+  eyes: {fileID: 0}
+  xpGainUI: {fileID: 0}
+  ragDoll: {fileID: 0}
+  deathScreen: {fileID: 0}
   gravityModifier: 2.5
   lowJumpMultipier: 2.5
   moveSpeed: 3
   turnSpeed: 60
   jumpHeight: 5
+  turnSmoothTime: 1
   lockPickSkill: 1
   currentMoveSpeed: 0
   currentTurnSpeed: 0
@@ -1362,8 +1380,152 @@ MonoBehaviour:
   xp: 0
   xpForNextLevel: 10
   level: 0
-  spawn: {x: 0, y: 0, z: 0}
-  controller: {fileID: 0}
+--- !u!82 &-6155799712856623603
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3926881087467143183}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!114 &6136705186510656363
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3926881087467143183}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Actions: {fileID: -944628639613478452, guid: a007c008af5235749bcde66fbde1426e, type: 3}
+  m_NotificationBehavior: 2
+  m_UIInputModule: {fileID: 0}
+  m_DeviceLostEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_DeviceRegainedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ControlsChangedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ActionEvents:
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 3926881087467143183}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 515ae553-917c-479e-85d3-865e677f3b3c
+    m_ActionName: PlayerActions/Jump[/DualSenseGamepadHID/buttonSouth,/XInputControllerWindows/buttonSouth,/Keyboard/space]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: b30dfcb3-2bcf-4718-a94c-94f5d7ee454a
+    m_ActionName: PlayerActions/Jump Hold[/DualSenseGamepadHID/buttonSouth,/XInputControllerWindows/buttonSouth,/Keyboard/space]
+  m_NeverAutoSwitchControlSchemes: 0
+  m_DefaultControlScheme: 
+  m_DefaultActionMap: PlayerActions
+  m_SplitScreenIndex: -1
+  m_Camera: {fileID: 0}
 --- !u!1 &4080646234832486168
 GameObject:
   m_ObjectHideFlags: 0
@@ -1420,7 +1582,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4083558613565427056}
-  m_LocalRotation: {x: 0.10410982, y: 0.000000017112876, z: -0.0000000017913532, w: 0.99456584}
+  m_LocalRotation: {x: 0.10410982, y: -0.00000001711288, z: 0.0000000017913535, w: 0.99456584}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1465,7 +1627,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.7802198, y: 1}
+    m_SensorSize: {x: 1.7785388, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -2043,7 +2205,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.7802198, y: 1}
+    m_SensorSize: {x: 1.7785388, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -2120,7 +2282,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.7802198, y: 1}
+    m_SensorSize: {x: 1.7785388, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0

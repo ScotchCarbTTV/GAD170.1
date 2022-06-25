@@ -1,0 +1,76 @@
+{
+    "name": "PlayerControls",
+    "maps": [
+        {
+            "name": "PlayerActions",
+            "id": "ff17fba8-1dfa-4ae2-a6fd-767538889920",
+            "actions": [
+                {
+                    "name": "Jump",
+                    "type": "Button",
+                    "id": "515ae553-917c-479e-85d3-865e677f3b3c",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Jump Hold",
+                    "type": "Button",
+                    "id": "b30dfcb3-2bcf-4718-a94c-94f5d7ee454a",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "Hold",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "6120f8c5-b7bb-49d7-a626-dab50a1ed317",
+                    "path": "<Gamepad>/buttonSouth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "fc63b6f1-e90f-417e-af51-7fa96e74e813",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "02e187d8-6c74-4093-899f-4d520381c446",
+                    "path": "<Gamepad>/buttonSouth",
+                    "interactions": "Hold",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Jump Hold",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "9339e9af-29e5-4a71-9845-4fc6f7c1fd70",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Jump Hold",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}

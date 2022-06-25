@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
+
 
 public class VictoryPanel : MonoBehaviour
 {
@@ -9,11 +11,15 @@ public class VictoryPanel : MonoBehaviour
     [SerializeField] GameObject gameOverlay;
     [SerializeField] GameObject vPanel;
 
+    [SerializeField] EventSystem eventSystem;
+    [SerializeField] GameObject replay;
+
     public void Victory()
     {
         player.SetActive(false);
         gameOverlay.SetActive(false);
         vPanel.SetActive(true);
+        eventSystem.SetSelectedGameObject(replay);
     }
         public void MainMenu()
     {

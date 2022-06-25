@@ -24,6 +24,14 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
     [SerializeField] private CinemachineBrain brain;
     [SerializeField] CinemachineFreeLook cinemachine;
 
+    //variables referencing the audio source and audio prefab for footstep and jump
+    [SerializeField] AudioSource source;
+    [SerializeField] AudioClip footClip;
+    [SerializeField] AudioClip jumpClip;
+    [SerializeField] AudioClip oofClip;
+    [SerializeField] AudioClip crunchClip;
+    
+
     //variable referencing the StatManagerUI script to update the UI
     [SerializeField] StatManagerUI statManager;
 
@@ -199,7 +207,7 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
     {
 
         //Test the GainXp function by pressing the x button. 
-        if (Input.GetKeyDown(KeyCode.X) == true) { GainXP(10); }
+        //if (Input.GetKeyDown(KeyCode.X) == true) { GainXP(10); }
 
         //levelling up code
         #region
@@ -261,6 +269,11 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
             if (animManager.fall == false)
             {
                 animManager.ToggleRun(true);
+                source.clip = footClip;
+                if (source.isPlaying == false)
+                {
+                    source.Play();
+                }
             }
 
         }
@@ -268,6 +281,7 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
         else
         {
             animManager.ToggleRun(false);
+            source.clip = null;
         }
         #endregion
     }
@@ -280,10 +294,14 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
         if (jumpType == 1)
         {
             animManager.JumpAnim();
+            source.clip = null;
+            source.PlayOneShot(jumpClip);
         }
         else if (jumpType == 2)
         {
             animManager.Ouchie();
+            source.clip = null;
+            source.PlayOneShot(oofClip);
         }
     }
 
@@ -403,6 +421,8 @@ public class PlayerControllerThatLevelsUp : MonoBehaviour
             {
                 //call the death function on the enemy being stomped
                 enemy.Death();
+                source.clip = null;
+                source.PlayOneShot(crunchClip);
                 Jump(1.5f, 1);
             }
 

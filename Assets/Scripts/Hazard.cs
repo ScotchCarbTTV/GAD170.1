@@ -49,6 +49,7 @@ public class Hazard : MonoBehaviour
             invuln = true;
             //deduct health from the player
             pHealth.LoseHealth();
+            pController.Jump(0.5f, 2);
             //wait for a moment
             yield return new WaitForSeconds(1.5f);
             //remove invulnerability
