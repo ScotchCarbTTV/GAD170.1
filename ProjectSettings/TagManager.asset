@@ -5,6 +5,11 @@ TagManager:
   serializedVersion: 2
   tags:
   - Ground
+  - Fog
+  - Checkpoint
+  - XPUIManager
+  - FreeLook
+  - FreelookFocal
   layers:
   - Default
   - TransparentFX

@@ -15,21 +15,46 @@ using UnityEngine;
 
 public class Coin : MonoBehaviour
 {
+    //variables for the spin value and xp value of the object
     public float spinSpeed = 100f;
     public int xpValue = 1;
 
+    [SerializeField] private XPGainUI xpGainUI;
+    [SerializeField] private PlayerControllerThatLevelsUp pController;
+
+    public enum CoinType { OneXP, TenXP }
+    public CoinType coinType;
+
+    private void Awake()
+    {
+        GameObject.FindGameObjectWithTag("XPUIManager").TryGetComponent<XPGainUI>(out xpGainUI);
+    }
+
     void Update()
     {
-        this.transform.Rotate(0f, 0f, Time.deltaTime * this.spinSpeed);
+        //each frame rotate the object according to the spin speed modified by the framerate vs real time
+        this.transform.Rotate(0f, Time.deltaTime * this.spinSpeed, 0f);
     }
 
     private void OnTriggerEnter(Collider other)
     {
-
-        if (other.gameObject.tag == "Player")
+        //check if the object entering the trigger is the player
+        if (other.gameObject.TryGetComponent<PlayerControllerThatLevelsUp>(out pController))
         {
-            other.gameObject.GetComponent<PlayerControllerThatLevelsUp>().GainXP(xpValue);
-            Debug.Log("The coin was collected");
+            //call the GainXP method on the player
+            pController.GainXP(xpValue);
+
+            //Debug.Log("The coin was collected");            
+            if (coinType == CoinType.OneXP)
+            {
+                xpGainUI.OneXP();
+            }
+            else if (coinType == CoinType.TenXP)
+            {
+                xpGainUI.TenXP();
+            }
+
+            //remove this coin from the game scene
             Destroy(this.gameObject);
         }
     }
